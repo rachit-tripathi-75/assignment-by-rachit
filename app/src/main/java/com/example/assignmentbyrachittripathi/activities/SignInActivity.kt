@@ -1,5 +1,6 @@
 package com.example.assignmentbyrachittripathi.activities
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -27,11 +28,6 @@ class SignInActivity : AppCompatActivity() {
     private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val sharedPreferences = getSharedPreferences("userSessionPrefs", MODE_PRIVATE)
-        if (sharedPreferences.getBoolean("isLoggedIn", true)) {
-            startActivity(Intent(this@SignInActivity, MainActivity::class.java))
-            finish()
-        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivitySignInBinding.inflate(layoutInflater)
@@ -88,10 +84,7 @@ class SignInActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.INVISIBLE
                     binding.btnSignIn.visibility = View.VISIBLE
                     if (loginResponse.status == "success") {
-                        val sharedPreferences1 = getSharedPreferences("userSessionPrefs", MODE_PRIVATE)
-                        val editor1 = sharedPreferences1.edit()
-                        editor1.putBoolean("isLoggedIn", true)
-                        editor1.apply()
+                        saveLoginState(this@SignInActivity, true)
                         val userData = loginResponse.data
                         val intent = Intent(this@SignInActivity, MainActivity::class.java)
                         val sharedPreferences2 = getSharedPreferences("userDetailsPrefs", MODE_PRIVATE)
@@ -140,9 +133,16 @@ class SignInActivity : AppCompatActivity() {
             binding.etUsername.setError("Please enter your username")
             return false
         } else if (binding.etPassword.text.toString().isEmpty()) {
-            binding.etUsername.setError("Please enter your password")
+            binding.etPassword.setError("Please enter your password")
             return false
         }
         return true
+    }
+
+    fun saveLoginState(context: Context, isLoggedIn: Boolean) {
+        val sharedPreferences = context.getSharedPreferences("userSessionPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", isLoggedIn)
+        editor.apply()
     }
 }

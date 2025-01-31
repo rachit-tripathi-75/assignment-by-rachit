@@ -3,6 +3,7 @@ package com.example.assignmentbyrachittripathi.activities
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -113,10 +114,7 @@ class MainActivity : AppCompatActivity() {
                 .setTitle("Log out")
                 .setMessage("Are you sure you want to log out?")
                 .setPositiveButton("yes") { dialog, which ->
-                    val sharedPreferences1 = getSharedPreferences("userSessionPrefs", MODE_PRIVATE)
-                    val editor = sharedPreferences1.edit()
-                    editor.putBoolean("isLoggedIn", false)
-                    editor.apply()
+                    logoutUser(this@MainActivity)
                     startActivity(Intent(this@MainActivity, SignInActivity::class.java))
                     finishAffinity()
 
@@ -163,5 +161,12 @@ class MainActivity : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    fun logoutUser(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("userSessionPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.apply()
     }
 }
